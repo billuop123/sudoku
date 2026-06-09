@@ -1,1 +1,1 @@
-![Sudoku Image](./sudoku.png)
+![Sudoku Image](./sudoku.jpeg)
