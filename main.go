@@ -9,9 +9,10 @@ import (
 )
 
 const (
-	SIZE     int = 9
-	CELLSIZE int = 60
-	FPS          = 60
+	SIZE            int = 9
+	CELLSIZE        int = 60
+	FPS                 = 60
+	CLUES_TO_REMOVE     = 40
 )
 
 func main() {
@@ -197,15 +198,38 @@ func populateGrid(grid [][]string) {
 			grid[i][j] = "."
 		}
 	}
+	solveGrid(grid)
+	removeClues(grid, CLUES_TO_REMOVE)
+}
+
+func solveGrid(grid [][]string) bool {
 	for i := range SIZE {
 		for j := range SIZE {
 			if grid[i][j] == "." {
-				randomNumber := rand.Intn(SIZE) + 1
-				grid[i][j] = strconv.Itoa(randomNumber)
-				if !isValid(grid) {
+				numbers := rand.Perm(SIZE)
+				for _, n := range numbers {
+					grid[i][j] = strconv.Itoa(n + 1)
+					if isValid(grid) {
+						if solveGrid(grid) {
+							return true
+						}
+					}
 					grid[i][j] = "."
 				}
+				return false
 			}
+		}
+	}
+	return true
+}
+
+func removeClues(grid [][]string, number int) {
+	for number > 0 {
+		randomIndex1 := rand.Intn(SIZE)
+		randomIndex2 := rand.Intn(SIZE)
+		if grid[randomIndex2][randomIndex1] != "." {
+			grid[randomIndex2][randomIndex1] = "."
+			number--
 		}
 	}
 }
